@@ -21,7 +21,10 @@ def verify_container(container: Container) -> None:
 
 def test_env_vars_2() -> None:
     name = os.getenv("NAME")
-    image = f"tiangolo/uvicorn-gunicorn:{name}"
+    if name:
+        image = f"tiangolo/uvicorn-gunicorn:{name}"
+    else:
+        image = os.getenv("IMAGE_SPEC")
     sleep_time = int(os.getenv("SLEEP_TIME", 1))
     time.sleep(sleep_time)
     remove_previous_container(client)
