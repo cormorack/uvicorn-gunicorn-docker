@@ -13,6 +13,8 @@ export APP_MODULE=${APP_MODULE:-"$MODULE_NAME:$VARIABLE_NAME"}
 HOST=${HOST:-0.0.0.0}
 PORT=${PORT:-80}
 LOG_LEVEL=${LOG_LEVEL:-info}
+LOOP=${LOOP:-auto}
+HTTP=${HTTP:-auto}
 
 # If there's a prestart.sh script in the /app directory or other path specified, run it before starting
 PRE_START_PATH=${PRE_START_PATH:-/app/prestart.sh}
@@ -25,4 +27,11 @@ else
 fi
 
 # Start Uvicorn with live reload
-exec uvicorn --reload --host $HOST --port $PORT --log-level $LOG_LEVEL "$APP_MODULE"
+exec uvicorn \
+        --reload \
+        --loop $LOOP \
+        --http $HTTP \
+        --host $HOST \
+        --port $PORT \
+        --log-level $LOG_LEVEL \
+        "$APP_MODULE"
