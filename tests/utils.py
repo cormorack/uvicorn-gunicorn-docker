@@ -56,6 +56,10 @@ def get_response_text2() -> str:
 
 
 def generate_dockerfile_content(name: str) -> str:
-    content = f"FROM tiangolo/uvicorn-gunicorn:{name}\n"
+    if name:
+        content = f"FROM tiangolo/uvicorn-gunicorn:{name}\n"
+    else:
+        image = os.getenv("IMAGE_SPEC")
+        content = f"FROM {image}\n"
     content += "COPY ./app /app"
     return content
