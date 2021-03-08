@@ -70,24 +70,10 @@ jobs:
           DOCKER_TAG=python${{ matrix.image.python_version }}-conda${{ matrix.image.conda_version }}
           IMAGE_SPEC="${{ env.DOCKER_ORG }}/${{ env.IMAGE_NAME }}:${DOCKER_TAG}"
           echo "IMAGE_SPEC=${IMAGE_SPEC}" >> $GITHUB_ENV
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Build Docker Image
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          context: ./docker-images
-          file: ./docker-images/conda.dockerfile
-          push: false
-          build-args: |
-            CONDA_VERSION=${{ matrix.image.conda_version }}
-            PYTHON_VERSION=${{ matrix.image.python_version }}
-          tags: |
-            ${{ env.IMAGE_SPEC }}
       - name: Test Image
-        run: python3.7 -m pytest tests
+        run: bash scripts/conda-test.sh
         env:
+          DOCKER_ORG: ${{ env.DOCKER_ORG }}
           IMAGE_SPEC: ${{ env.IMAGE_SPEC }}
+          CONDA_VERSION: ${{ matrix.image.conda_version }}
           PYTHON_VERSION: ${{ matrix.image.python_version }}
