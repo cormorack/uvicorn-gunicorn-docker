@@ -1,0 +1,48 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - conda
+  pull_request:
+    branches:
+      - conda
+    types: [opened, synchronize]
+
+env:
+  DOCKER_ORG: cormorack
+  IMAGE_NAME: uvicorn-gunicorn
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        image:
+          - conda_version: "4.9.2" 
+            python_version: "3.7"
+          - conda_version: "4.9.2" 
+            python_version: "3.8"
+          - conda_version: "4.9.2" 
+            python_version: "3.9"
+      fail-fast: true
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: "3.7"
+      - name: Install Dependencies
+        run: python3.7 -m pip install docker pytest
+      - name: Set Docker Image Spec
+        run: |
+          DOCKER_TAG=python${{ matrix.image.python_version }}-conda${{ matrix.image.conda_version }}
+          IMAGE_SPEC="${{ env.DOCKER_ORG }}/${{ env.IMAGE_NAME }}:${DOCKER_TAG}"
+          echo "IMAGE_SPEC=${IMAGE_SPEC}" >> $GITHUB_ENV
+      - name: Test Image
+        run: bash scripts/conda-test.sh
+        env:
+          DOCKER_ORG: ${{ env.DOCKER_ORG }}
+          IMAGE_SPEC: ${{ env.IMAGE_SPEC }}
+          CONDA_VERSION: ${{ matrix.image.conda_version }}
+          PYTHON_VERSION: ${{ matrix.image.python_version }}
