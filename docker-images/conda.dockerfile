@@ -47,12 +47,14 @@ CMD ["/start.sh"]
 # ----------------------
 ONBUILD COPY . /tmp
 
-ONBUILD RUN echo "Checking for 'app' folder" \
-        ; if [ -d /tmp/app ] ; then \
-        echo "Moving app" && rm -rf /app && mv /tmp/app /app \
-        ; else \
-        echo "Using default app" \
-        ; fi
+# Rather than copying app, this allows to just look for the app folder ...
+# Not in use atm.
+# ONBUILD RUN echo "Checking for 'app' folder" \
+#         ; if [ -d /tmp/app ] ; then \
+#         echo "Moving app" && rm -rf /app && mv /tmp/app /app \
+#         ; else \
+#         echo "Using default app" \
+#         ; fi
 
 ONBUILD RUN echo "Checking for 'environment.yaml' file" \
         ; if [ -f /tmp/environment.yaml ] ; then \
