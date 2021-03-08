@@ -1,4 +1,4 @@
-name: Deploy
+name: Conda Deploy
 
 on:
   push:
